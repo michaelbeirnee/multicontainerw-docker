@@ -63,4 +63,48 @@ public class TodoController {
         //from mongorepository - saves the todo in mongoDB 
         return todoRepository.save(todo); 
     }
+
+    //from spring web - hanldes get / todo{ids}
+    @GetMapping("/{id}")
+    public Todo getTodoById(@PathVariable String id){
+        //from mongorepository - search mongodb by id 
+        return todoRepositroy.findById(id).orElseThrow( () -> new ToDoNotFoundException(id)); 
+    }
+
+    //from the spring web - handles put to do 
+    @PutMappping // id something - look into 
+    public Todo updateTodo()
+        //reads id from url - talking to database - how? 
+        //why do this - skip the need to talk directly to database 
+        @PathVariable String id;  // string id goes into database ... i think? 
+
+        @Valid @RequestBody  TodoRequest request; 
+    ){
+        //searches mongodb by id then throw 404 if not found 
+        Todo todo = todoRepository.findById(id).orElseThrow( () -> new TodoNotFoundException(id));
+        
+        //updates the todo title 
+        todo.setTitle(request.getTitle()); 
+
+        //updates the completed value
+        todo.setCompleted(request.isCompleted()); 
+
+        //from mongo repository - save the updated todo in mongodb
+        return todoRepository.save(todo); 
+    }
+
+    @DeleteMapping //figure out id part here - missing id mapping
+    public DeleteResposne deleteTodo(@PathVariable String id){
+
+        Todo todo = todoRepository.findById(id).orElseThrow( () -> new TodoNotFoundException(id)); 
+        todoRepository.delete(todo); 
+
+        return new DeleteResponse(true); 
+    }
+
+    //what is this conctrcut 
+    //java record use to reutrn a small json dleete repsonse
+    public record DeleteResposne(boolean deleted){
+        
+    }
 }
